@@ -14,13 +14,19 @@ license: MIT
 
 ## 依赖
 
-脚本需要 `requests` + `beautifulsoup4`，已装在隔离 venv：
+脚本只需 `requests` + `beautifulsoup4`，纯 Python、零框架依赖，跨平台通用（WorkBuddy / Claude Code / Codex）。
 
+**WorkBuddy 本机**：依赖已装在隔离 venv，直接用：
 ```bash
 PY="C:/Users/Jiazi/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
 ```
 
-**不要用系统 `python3`**——系统 Python 没装 bs4，会报 `ModuleNotFoundError: bs4`。
+**其他平台（Claude Code / Codex / 原生 Python）**：在当前环境装依赖即可：
+```bash
+pip install -r requirements.txt
+```
+
+**不要用本机系统 `python3`**（没装 bs4，会报 `ModuleNotFoundError: bs4`）——非 WorkBuddy 平台先 `pip install -r requirements.txt` 再跑。
 
 ## 快速使用
 

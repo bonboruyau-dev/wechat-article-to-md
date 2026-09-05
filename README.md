@@ -16,7 +16,7 @@
 - 🅷 **大标题层级还原**：识别「一、背景」「二、xxx」「结语」等样式伪装的彩色标题条，提升为 `##`
 - 📝 **完整 Markdown**：标题 / 列表 / 代码块 / 引用 / 粗斜体 / 链接 全部保留
 - 🗃️ **Obsidian 模式**：图片引用转 `![[filename.png]]`，适配双链与全文搜索
-- 🤖 **Agent 友好**：纯 Python 脚本，无框架依赖，WorkBuddy / Claude / 任意 Agent 可直接调用
+- 🤖 **跨平台 Agent Skill**：纯 Python 脚本，无框架依赖，WorkBuddy / Claude Code / Codex 均可直接调用
 
 ## 🚀 快速开始 / Quick Start
 
@@ -35,6 +35,18 @@ python scripts/wechat_article_to_md.py "https://mp.weixin.qq.com/s/xxxxxx" ./vau
 ```
 
 > **WorkBuddy 用户**：技能已内置隔离 venv，直接让 Agent 调用即可，无需手动装依赖、无需记忆路径。
+
+## 🧩 跨平台安装 / Multi-Platform Setup
+
+本技能是标准 **Agent Skill**（`SKILL.md` + 纯 Python 脚本），三端通用：
+
+| 平台 | 安装方式 | 依赖 |
+|---|---|---|
+| **WorkBuddy** | 从 SkillHub 一键导入，或放入 `~/.workbuddy/skills/` | 已内置隔离 venv，无需手动装 |
+| **Claude Code** | 放入 `~/.claude/skills/`（全局）或项目 `.claude/skills/` | `pip install -r requirements.txt` |
+| **Codex** | 放入 `~/.codex/skills/`（全局）或项目 `.codex/skills/` | `pip install -r requirements.txt` |
+
+脚本零框架依赖，任何能跑 Python 3.10+ 的环境都能执行；`SKILL.md` 遵循 Anthropic Agent Skills 开放格式，三端均可识别。
 
 ## 📖 输出示例 / Example
 
@@ -110,4 +122,4 @@ pip install -r requirements.txt
 python scripts/wechat_article_to_md.py "<article_url>" [output_dir] [-obsidian]
 ```
 
-**Keywords**: wechat, weixin, official-account, markdown, converter, html-to-markdown, obsidian, rag, knowledge-base, scraper, skill, workbuddy
+**Keywords**: wechat, weixin, official-account, markdown, converter, html-to-markdown, obsidian, rag, knowledge-base, scraper, skill, agent-skills, workbuddy, claude-code, codex
