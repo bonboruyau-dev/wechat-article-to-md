@@ -374,8 +374,16 @@ def html_to_markdown(soup, img_dir=None, article_id=None, obsidian_mode=False, a
 
             # 代码块
             if tag_name == 'pre':
-                code = child.get_text()
-                if code:
+                # 公众号代码块：每个 <code> 子元素是一行（微信用 <code> 分行，无 <br>/<p>）
+                codes = child.find_all('code')
+                if codes:
+                    code = '\n'.join(c.get_text() for c in codes)
+                else:
+                    for br in child.find_all('br'):
+                        br.replace_with('\n')
+                    code = child.get_text()
+                code = code.replace('\xa0', ' ').strip('\n')
+                if code.strip():
                     md_content.append(f"\n```\n{code}\n```\n\n")
                 continue
 
