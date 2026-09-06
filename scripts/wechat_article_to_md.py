@@ -124,7 +124,8 @@ def promote_fake_headings(content_root):
       # 文章标题 / ## 大标题 / ### 1.1 / #### 2.3.1
     """
     pattern = re.compile(
-        r'^\s*(?:[一二三四五六七八九十]+、|结语|附\s*[:：]?|总结)\s*.{0,40}$'
+        r'^\s*(?:[一二三四五六七八九十]+、|结语|附\s*[:：]?|总结'
+        r'|\d{1,2}[、.．\s]*[\u4e00-\u9fffA-Za-z])\s*.{0,40}$'
     )
     promoted = []
     for el in list(content_root.find_all(['section', 'p', 'div'])):
