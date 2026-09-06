@@ -218,6 +218,9 @@ def html_to_markdown(soup, img_dir=None, article_id=None, obsidian_mode=False, a
                         else:
                             parts.append(f"![{alt}]({src})")
 
+                elif tag_name == 'br':
+                    parts.append('<br>')
+
                 else:
                     result = process_inline_elements(child)
                     if result:
@@ -238,6 +241,11 @@ def html_to_markdown(soup, img_dir=None, article_id=None, obsidian_mode=False, a
             return ''
 
         def cell_text(cell):
+            # 单元格内多个块级元素（<p>/<li>/<section>/<div>）之间用 <br> 换行，避免挤成一行
+            blocks = cell.find_all(['p', 'li', 'section', 'div'])
+            for i, el in enumerate(blocks):
+                if i > 0:
+                    el.insert_before(cell.new_tag('br'))
             text = process_inline_elements(cell).strip()
             return text if text else ' '
 
