@@ -125,7 +125,7 @@ def promote_fake_headings(content_root):
     """
     pattern = re.compile(
         r'^\s*(?:[一二三四五六七八九十]+、|结语|附\s*[:：]?|总结'
-        r'|\d{1,2}[、.．\s]*[\u4e00-\u9fffA-Za-z])\s*.{0,40}$'
+        r'|\d{1,2}[.．]?[\u4e00-\u9fffA-Za-z])\s*.{0,40}$'
     )
     promoted = []
     for el in list(content_root.find_all(['section', 'p', 'div'])):
@@ -141,6 +141,30 @@ def promote_fake_headings(content_root):
         el.name = 'h2'
         promoted.append(el)
     return len(promoted)
+
+
+def _render_list(el):
+    """递归渲染嵌套/混排列表为 Markdown 行（供 ul/ol 的混排与纯容器场景复用）"""
+    import copy
+    lines = []
+    ordered = el.name == 'ol'
+    idx = 0
+    for c in el.children:
+        name = getattr(c, 'name', None)
+        if name == 'li':
+            idx += 1
+            cc = copy.copy(c)
+            for sub in cc.find_all(['ul', 'ol']):
+                sub.decompose()
+            text = cc.get_text(strip=True)
+            if text:
+                prefix = f"{idx}." if ordered else "-"
+                lines.append(f"{prefix} {text}\n")
+            for sub in [x for x in c.children if getattr(x, 'name', None) in ('ul', 'ol')]:
+                lines.extend(_render_list(sub))
+        elif name in ('ul', 'ol'):
+            lines.extend(_render_list(c))
+    return lines
 
 
 def html_to_markdown(soup, img_dir=None, article_id=None, obsidian_mode=False, article_url=None):
@@ -357,19 +381,34 @@ def html_to_markdown(soup, img_dir=None, article_id=None, obsidian_mode=False, a
 
             # 无序列表
             if tag_name == 'ul':
-                for li in child.find_all('li', recursive=False):
-                    text = li.get_text(strip=True)
-                    if text:
-                        md_content.append(f"- {text}\n")
+                # 容错：li 与子 ul/ol 混排（直接子 = [li, ul]）或纯容器嵌套，均按文档顺序递归处理
+                direct = [c for c in child.children if getattr(c, 'name', None) in ('li', 'ul', 'ol')]
+                if any(c.name == 'li' for c in direct):
+                    for c in direct:
+                        if c.name == 'li':
+                            text = c.get_text(strip=True)
+                            if text:
+                                md_content.append(f"- {text}\n")
+                        else:
+                            md_content.extend(_render_list(c))
+                else:
+                    for c in direct:
+                        if c.name in ('ul', 'ol'):
+                            md_content.extend(_render_list(c))
                 md_content.append("\n")
                 continue
 
             # 有序列表
             if tag_name == 'ol':
-                for i, li in enumerate(child.find_all('li', recursive=False), 1):
-                    text = li.get_text(strip=True)
-                    if text:
-                        md_content.append(f"{i}. {text}\n")
+                idx = 0
+                for c in [x for x in child.children if getattr(x, 'name', None) in ('li', 'ul', 'ol')]:
+                    if c.name == 'li':
+                        idx += 1
+                        text = c.get_text(strip=True)
+                        if text:
+                            md_content.append(f"{idx}. {text}\n")
+                    else:
+                        md_content.extend(_render_list(c))
                 md_content.append("\n")
                 continue
 
