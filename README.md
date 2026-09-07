@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **本项目已合并至 [wechat2knowledge](https://github.com/bonboruyau-dev/wechat2knowledge)**（公众号文章转知识库：Markdown + 飞书二合一）。本仓库已归档，仅作历史参考，请前往新仓库获取最新版本。
+
 # 微信公众号文章转 Markdown · wechat-article-to-md
 
 > 一键把微信公众号文章抓取为干净的 Markdown：自动提取标题 / 作者 / 来源，下载图片，表格转 GFM，识别「一、背景」等伪装大标题，支持 Obsidian 双链。适合知识库归档、RAG 语料清洗、内容二次创作。
